@@ -171,6 +171,7 @@ void iothub_client_sample_mqtt_run(void)
             else
             {
                 (void)printf("IoTHubClient_LL_SetMessageCallback...successful.\r\n");
+                IoTHubClient_LL_EnableE2EDiagnosticWithCloudSetting(iotHubClientHandle);
 
                 /* Now that we are ready to receive commands, let's send some messages */
                 size_t iterator = 0;
