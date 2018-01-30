@@ -8,7 +8,9 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif()
 
 include_directories("/usr/local/include/azureiot"
-                    "/usr/local/include/azureiot/inc/")
+                    "/usr/local/include/azureiot/inc/"
+                    "/usr/include/azureiot"
+                    "/usr/include/azureiot/inc/")
 
 set(SOURCE main.c bme280.c wiring.c telemetry.c config.h bme280.h wiring.h telemetry.h)
 add_executable(app ${SOURCE})

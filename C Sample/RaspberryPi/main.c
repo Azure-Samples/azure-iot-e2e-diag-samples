@@ -6,7 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <azure_c_shared_utility/xlogging.h>
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/threadapi.h>
 #include <azure_c_shared_utility/crt_abstractions.h>
@@ -39,10 +38,6 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void *userCon
     {
         blinkLED();
     }
-    else
-    {
-        LogError("Failed to send message to Azure IoT Hub");
-    }
 
     messagePending = false;
 }
@@ -50,23 +45,13 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void *userCon
 static void sendMessages(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, char *buffer, int temperatureAlert)
 {
     IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromByteArray(buffer, strlen(buffer));
-    if (messageHandle == NULL)
-    {
-        LogError("Unable to create a new IoTHubMessage");
-    }
-    else
+    if (messageHandle != NULL)
     {
         MAP_HANDLE properties = IoTHubMessage_Properties(messageHandle);
         Map_Add(properties, "temperatureAlert", (temperatureAlert > 0) ? "true" : "false");
-        LogInfo("Sending message: %s", buffer);
-        if (IoTHubClient_LL_SendEventAsync(iotHubClientHandle, messageHandle, sendCallback, NULL) != IOTHUB_CLIENT_OK)
-        {
-            LogError("Failed to send message to Azure IoT Hub");
-        }
-        else
+        if (IoTHubClient_LL_SendEventAsync(iotHubClientHandle, messageHandle, sendCallback, NULL) == IOTHUB_CLIENT_OK)
         {
             messagePending = true;
-            LogInfo("Message sent to Azure IoT Hub");
         }
 
         IoTHubMessage_Destroy(messageHandle);
@@ -110,7 +95,6 @@ int deviceMethodCallback(
     size_t *response_size,
     void *userContextCallback)
 {
-    LogInfo("Try to invoke method %s\r\n", methodName);
     const char *responseMessage = onSuccess;
     int result = 200;
 
@@ -124,7 +108,6 @@ int deviceMethodCallback(
     }
     else
     {
-        LogError("No method %s found\r\n", methodName);
         responseMessage = notFound;
         result = 404;
     }
@@ -156,7 +139,6 @@ void twinCallback(
 
         if (MULTITREE_OK != MultiTree_GetChildByName(tree, "desired", &child))
         {
-            LogInfo("This device twin message contains desired message only");
             child = tree;
         }
         const void *value = NULL;
@@ -206,7 +188,6 @@ static char *readFile(char *fileName)
 
     if (fp == NULL)
     {
-        LogError("ERROR: File %s doesn't exist!", fileName);
         return NULL;
     }
 
@@ -220,7 +201,6 @@ static char *readFile(char *fileName)
     if (buffer == NULL)
     {
         fclose(fp);
-        LogError("ERROR: Failed to allocate memory.");
         return NULL;
     }
 
@@ -229,7 +209,6 @@ static char *readFile(char *fileName)
     {
         fclose(fp);
         free(buffer);
-        LogError("ERROR: Failed to read the file %s into memory.", fileName);
         return NULL;
     }
 
@@ -255,7 +234,6 @@ static bool setX509Certificate(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, char 
         IoTHubClient_LL_SetOption(iotHubClientHandle, OPTION_X509_CERT, x509certificate) != IOTHUB_CLIENT_OK ||
         IoTHubClient_LL_SetOption(iotHubClientHandle, OPTION_X509_PRIVATE_KEY, x509privatekey) != IOTHUB_CLIENT_OK)
     {
-        LogError("Failed to set options for x509.");
         return false;
     }
 
@@ -321,7 +299,6 @@ int main(int argc, char *argv[])
     initial_telemetry();
     if (argc < 2)
     {
-        LogError("Usage: %s <IoT hub device connection string>", argv[0]);
         send_telemetry_data(NULL, EVENT_FAILED, "Device connection string is not provided");
         return 1;
     }
@@ -333,7 +310,6 @@ int main(int argc, char *argv[])
 
     if (device_id_src == NULL)
     {
-        LogError("Cannot parse device id from IoT device connection string");
         send_telemetry_data(NULL, EVENT_FAILED, "Cannot parse device id from connection string");
         pthread_join(thread, NULL);
         return 1;
@@ -346,14 +322,12 @@ int main(int argc, char *argv[])
 
     if (platform_init() != 0)
     {
-        LogError("Failed to initialize the platform.");
         send_telemetry_data(NULL, EVENT_FAILED, "Failed to initialize the platform.");
     }
     else
     {
         if ((iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(argv[1], MQTT_Protocol)) == NULL)
         {
-            LogError("iotHubClientHandle is NULL!");
             send_telemetry_data(NULL, EVENT_FAILED, "Cannot create iotHubClientHandle");
         }
         else
@@ -374,7 +348,7 @@ int main(int argc, char *argv[])
             IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
 
             IoTHubClient_LL_SetOption(iotHubClientHandle, "product_info", "HappyPath_RaspberryPi-C");
-            
+
             IoTHubClient_LL_EnableE2EDiagnosticWithCloudSetting(iotHubClientHandle);
 
             char *iotHubName = parse_iothub_name(argv[1]);
@@ -392,10 +366,6 @@ int main(int argc, char *argv[])
                         if (result != -1)
                         {
                             sendMessages(iotHubClientHandle, buffer, result);
-                        }
-                        else
-                        {
-                            LogError("Failed to read message");
                         }
                     }
                     delay(interval);
