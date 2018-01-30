@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "iothub_client.h"
+#include "iothub_client_ll.h"
 #include "iothub_message.h"
 #include "azure_c_shared_utility/threadapi.h"
 #include "azure_c_shared_utility/crt_abstractions.h"
@@ -24,13 +25,13 @@
 /*String containing Hostname, Device Id & Device Key in the format:                         */
 /*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"                */
 /*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessSignature=<device_sas_token>"    */
-static const char* connectionString = "[device connection string]";
+static const char* connectionString = "HostName=E2Ediagnostics.azure-devices.net;DeviceId=erichDevice;SharedAccessKey=WyrW39ILBr7oLkbJLERKJDf8x3oBvzeSkL4FSKHAQag=";
 
 static int callbackCounter;
 static char msgText[1024];
 static char propText[1024];
 static bool g_continueRunning;
-#define MESSAGE_COUNT 5
+#define MESSAGE_COUNT 500
 #define DOWORK_LOOP_NUM     3
 
 
@@ -154,6 +155,7 @@ void iothub_client_sample_mqtt_run(void)
         {
             bool traceOn = true;
             IoTHubClient_LL_SetOption(iotHubClientHandle, OPTION_LOG_TRACE, &traceOn);
+            IoTHubClient_LL_EnableE2EDiagnosticWithCloudSetting(iotHubClientHandle);
 
 #ifdef SET_TRUSTED_CERT_IN_SAMPLES
             // For mbed add the certificate information
@@ -171,7 +173,6 @@ void iothub_client_sample_mqtt_run(void)
             else
             {
                 (void)printf("IoTHubClient_LL_SetMessageCallback...successful.\r\n");
-                IoTHubClient_LL_EnableE2EDiagnosticWithCloudSetting(iotHubClientHandle);
 
                 /* Now that we are ready to receive commands, let's send some messages */
                 size_t iterator = 0;
@@ -216,7 +217,7 @@ void iothub_client_sample_mqtt_run(void)
 
                     }
                     IoTHubClient_LL_DoWork(iotHubClientHandle);
-                    ThreadAPI_Sleep(1);
+                    ThreadAPI_Sleep(1000);
 
                     iterator++;
                 } while (g_continueRunning);
