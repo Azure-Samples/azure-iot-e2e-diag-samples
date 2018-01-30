@@ -16,7 +16,7 @@
 4. Use local nuget package
 
     1) Open the project using VS2017
-    2) [Install the local Nuget Package](https://stackoverflow.com/questions/10240029/how-do-i-install-a-nuget-package-nupkg-file-locally) in the folder azure-iot-e2e-diag-samples\CSharp\NugetPackage
+    2) [Install the local Nuget Package](https://stackoverflow.com/questions/10240029/how-do-i-install-a-nuget-package-nupkg-file-locally) and put preview bits into the nuget folder.
 
 5. Build and run the application
 
