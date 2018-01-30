@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices.Client;
@@ -42,8 +41,8 @@ namespace UWPSample
             try
             {
                 this.deviceClient = DeviceClient.CreateFromConnectionString(DeviceConnectionString, this.Protocol);
-
                 await this.deviceClient.OpenAsync();
+                await this.deviceClient.EnableE2EDiagnosticWithCloudSetting();
 
                 Debug.WriteLine("Exited!\n");
             }

@@ -90,23 +90,5 @@ namespace Microsoft.Azure.Devices.Client.Samples
                 await this.client.Start();
             }
         }
-
-        private async Task AddItemToListBox(ListBox list, string item)
-        {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                () =>
-                {
-                    list.Items.Add(item);
-
-                    var selectedIndex = list.Items.Count - 1;
-                    if (selectedIndex < 0)
-                        return;
-
-                    list.SelectedIndex = selectedIndex;
-                    list.UpdateLayout();
-
-                    list.ScrollIntoView(list.SelectedItem);
-                });
-        }
     }
 }
