@@ -31,7 +31,7 @@ static int callbackCounter;
 static char msgText[1024];
 static char propText[1024];
 static bool g_continueRunning;
-#define MESSAGE_COUNT 500
+#define MESSAGE_COUNT 10000
 #define DOWORK_LOOP_NUM     3
 
 
@@ -217,7 +217,7 @@ void iothub_client_sample_mqtt_run(void)
 
                     }
                     IoTHubClient_LL_DoWork(iotHubClientHandle);
-                    ThreadAPI_Sleep(1000);
+                    ThreadAPI_Sleep(1500);
 
                     iterator++;
                 } while (g_continueRunning);

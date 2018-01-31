@@ -14,7 +14,7 @@ namespace SimulatedDevice
         // "HostName=<iothub_host_name>;CredentialType=SharedAccessSignature;DeviceId=<device_id>;SharedAccessSignature=SharedAccessSignature sr=<iot_host>/devices/<device_id>&sig=<token>&se=<expiry_time>";
         private const string DeviceConnectionString = "<replace>";
 
-        private static int MESSAGE_COUNT = 10;
+        private static int MESSAGE_COUNT = 10000;
         private const int TEMPERATURE_THRESHOLD = 30;
         private static float temperature;
         private static float humidity;
@@ -56,6 +56,7 @@ namespace SimulatedDevice
                 Console.WriteLine("\t{0}> Sending message: {1}, Data: [{2}]", DateTime.Now.ToLocalTime(), count, dataBuffer);
 
                 await deviceClient.SendEventAsync(eventMessage).ConfigureAwait(false);
+                System.Threading.Thread.Sleep(1500);
             }
         }
     }

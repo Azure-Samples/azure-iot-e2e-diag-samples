@@ -17,7 +17,7 @@
     ```bash
     cd azure-iot-e2e-diag-samples\Java\SimulatedDevice
     ```
-    Replace your device connection string in .\src\main\java\com\mycompany\app\App.java
+    Replace variables connString and deviceId with real values in .\src\main\java\com\mycompany\app\App.java
 
 4. Build and run the sample (On Windows platform please use CMD to execute commands)
 
