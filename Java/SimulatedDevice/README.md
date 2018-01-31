@@ -19,7 +19,7 @@
     ```
     Replace your device connection string in .\src\main\java\com\mycompany\app\App.java
 
-4. Build and run the sample
+4. Build and run the sample (On Windows platform please use CMD to execute commands)
 
    ```bash
     mvn clean package -DskipTests
