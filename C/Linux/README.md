@@ -1,40 +1,30 @@
 ## Download and setup the sample app
 
-Append the following content into /etc/apt/source.list
-??vivid or jessie??
+Add the apt repository
 
-```
-deb http://ppa.launchpad.net/aziotsdklinux/ppa-azureiot/ubuntu vivid main
-deb-src http://ppa.launchpad.net/aziotsdklinux/ppa-azureiot/ubuntu vivid main
-
-deb http://ppa.launchpad.net/aziotsdklinux/ppa-azureiot/ubuntu jessie main
-deb-src http://ppa.launchpad.net/aziotsdklinux/ppa-azureiot/ubuntu jessie main
+```bash
+sudo add-apt-repository ppa:aziotsdklinux/ppa-azureiot
 ```
 
-1. Prepare your Raspberry Pi
+1. Prepare your environment
     ```bash
     sudo apt-get update
     sudo apt-get install -y git cmake build-essential curl libcurl4-openssl-dev libssl-dev uuid-dev azure-iot-sdk-c-dev
     ```
+    
+2. Apply private bits
+    First, copy private bits to some folder
+    ```bash
+    tar -zxvf azure-iot-sdk-c-e2e-diag-preview-amd64.tar.gz
+    sudo dpkg -i ./*.deb
+    ```
 
-2. Clone the client application to local and change to work dir
+3. Clone the client application to local and change to work dir
 
    ```bash
    git clone --recursive https://github.com/Azure-Samples/azure-iot-e2e-diag-samples.git
    cd azure-iot-e2e-diag-samples/C/Linux/linux
    ```
-
-Replace with preview bits
- 
-For Linux AMD64
-??
-```bash
-sudo dpkg -i ./.deb
-```
-For Raspberry Pi
-```
-sudo dpkg -i ./.deb
-```
 
 4. Replace your device connection string
 
@@ -47,7 +37,7 @@ sudo dpkg -i ./.deb
     static const char* connectionString = "[device connection string]";
     ```
 
-2. Build the sample
+5. Build the sample
     cd
 
    ```bash
